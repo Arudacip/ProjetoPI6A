@@ -23,9 +23,11 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
     private Color corDeBordaAtual;
     private Color corInternaAtual;
     private PainelDeDesenho painel; //painel onde o desenho e feito 
-    private JMenuItem novo, abrir, salvar, sair, mudaCorInterna, mudaCorDeBorda; //itens de menu
-    private String ultimoDiretorioAcessado; //memoriza em qual diret�rio houve a ultima operacao de gravacao ou leitura
-
+    private JMenuItem mNovo, mAbrir, mSalvar, mSair, mudaCorInterna, mudaCorDeBorda; //itens de menu
+    private String ultimoDiretorioAcessado; //memoriza em qual diretorio houve a ultima operacao de gravacao ou leitura
+    private JMenuItem bLivre, bFreeman, bRetangulo, bTriangulo; //botoes da interface para cada funcao
+    private JMenuItem bUndo, bRedo, bMarcador;
+    
     /**
      * Constroi um objeto InterfaceGrafica
      */
@@ -39,9 +41,11 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 
         JMenu menuArquivo = criaMenuArquivo();
         JMenu menuDeCores = criaMenuDeCores();
+        JMenu menuFuncoes = criaMenuFuncoes();
         JMenuBar barraDeMenus = new JMenuBar();
         barraDeMenus.add(menuArquivo);
         barraDeMenus.add(menuDeCores);
+        barraDeMenus.add(menuFuncoes);
         setJMenuBar(barraDeMenus);
 
         painel = new PainelDeDesenho(this);
@@ -52,27 +56,27 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 
     private JMenu criaMenuArquivo() {
         JMenu menuArquivo = new JMenu("Arquivo");
-        novo = new JMenuItem("Novo Desenho"); //Cria um item de menu para comecar uma nova figura
-        novo.addActionListener(this); //Configura o ouvinte de acao
-        menuArquivo.add(novo); //Adiciona o item "Novo Desenho" ao Menu
+        mNovo = new JMenuItem("Novo Desenho"); //Cria um item de menu para comecar uma nova figura
+        mNovo.addActionListener(this); //Configura o ouvinte de acao
+        menuArquivo.add(mNovo); //Adiciona o item "Novo Desenho" ao Menu
 
-        abrir = new JMenuItem("Abrir");
-        abrir.addActionListener(this); //Configura o ouvinte de acao
-        menuArquivo.add(abrir); //Adiciona o item "Abrir" ao Menu
+        mAbrir = new JMenuItem("Abrir");
+        mAbrir.addActionListener(this); //Configura o ouvinte de acao
+        menuArquivo.add(mAbrir); //Adiciona o item "Abrir" ao Menu
 
-        salvar = new JMenuItem("Salvar");
-        salvar.addActionListener(this); //Configura o ouvinte de acao
-        menuArquivo.add(salvar); //Adiciona o item "Salvar" ao Menu
+        mSalvar = new JMenuItem("Salvar");
+        mSalvar.addActionListener(this); //Configura o ouvinte de acao
+        menuArquivo.add(mSalvar); //Adiciona o item "Salvar" ao Menu
 
-        sair = new JMenuItem("Sair");
-        sair.addActionListener(this); //Configura o ouvinte de acao
-        menuArquivo.add(sair); //Adiciona o item "Salvar" ao Menu
+        mSair = new JMenuItem("Sair");
+        mSair.addActionListener(this); //Configura o ouvinte de acao
+        menuArquivo.add(mSair); //Adiciona o item "Salvar" ao Menu
 
         return menuArquivo;
     }
 
     private JMenu criaMenuDeCores() {
-        JMenu menuDeCores = new JMenu("Cores");
+        JMenu menuDeCores = new JMenu("Opcoes");
 
         mudaCorInterna = new JMenuItem("Configurar Cor Interna");
         mudaCorInterna.addActionListener(this);
@@ -81,23 +85,71 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
         mudaCorDeBorda = new JMenuItem("Configurar Cor de Borda");
         mudaCorDeBorda.addActionListener(this);
         menuDeCores.add(mudaCorDeBorda);
+        
+        bMarcador = new JMenuItem("Configurar Marcador de Ponto");
+        bMarcador.addActionListener(this);
+        menuDeCores.add(bMarcador);
 
         return menuDeCores;
     }
+    
+    private JMenu criaMenuFuncoes() {
+    	JMenu menuFuncoes = new JMenu("Funcoes");
+    	
+    	//instanciar os botoes
+    	bLivre = new JMenuItem("Poligono");
+    	bFreeman = new JMenuItem("Freeman");
+    	bRetangulo = new JMenuItem("Retangulo");
+    	bTriangulo = new JMenuItem("Triangulo");
+    	bUndo = new JMenuItem("Undo");
+        bRedo = new JMenuItem("Redo");
+    	
+    	//define os listeners dos botoes
+    	bLivre.addActionListener(this);
+    	bFreeman.addActionListener(this);
+    	bRetangulo.addActionListener(this);
+    	bTriangulo.addActionListener(this);
+        bUndo.addActionListener(this);
+        bRedo.addActionListener(this);
+    	
+    	//acrescenta no menu de funcoes
+    	menuFuncoes.add(bUndo);
+    	menuFuncoes.add(bRedo);
+    	menuFuncoes.add(bLivre);
+    	menuFuncoes.add(bFreeman);
+    	menuFuncoes.add(bRetangulo);
+    	menuFuncoes.add(bTriangulo);
+
+        return menuFuncoes;
+    }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == novo) {
+        if (e.getSource() == mNovo) {
             novoArquivo();
-        } else if (e.getSource() == abrir) {
+        } else if (e.getSource() == mAbrir) {
             abrirArquivo();
-        } else if (e.getSource() == salvar) {
+        } else if (e.getSource() == mSalvar) {
             salvarArquivo();
-        } else if (e.getSource() == sair) {
+        } else if (e.getSource() == mSair) {
             sair();
         } else if (e.getSource() == mudaCorInterna) {
             mudarCorInterna();
         } else if (e.getSource() == mudaCorDeBorda) {
             mudarCorBorda();
+        } else if (e.getSource() == bLivre) {
+        	painel.funcaoAtiva = 0;
+        } else if (e.getSource() == bFreeman) {
+        	painel.funcaoAtiva = 1;
+        } else if (e.getSource() == bRetangulo) {
+        	painel.funcaoAtiva = 2;
+        } else if (e.getSource() == bTriangulo) {
+        	painel.funcaoAtiva = 3;
+        } else if (e.getSource() == bUndo) {
+        	painel.undo();
+        } else if (e.getSource() == bRedo) {
+        	painel.redo();
+        } else if (e.getSource() == bMarcador) {
+        	painel.alteraMarcador();
         }
     }
 
@@ -245,4 +297,5 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
     public Color getCorAtual() {
         return corDeBordaAtual;
     }
+    
 }
