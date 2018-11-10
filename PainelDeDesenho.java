@@ -12,10 +12,11 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 
     private static final long serialVersionUID = 1L;
     private InterfaceGrafica aplicacao;
-    private ArrayList<Point> pontos; // Pontos de uma figura
-    private ArrayList<ArrayList<Point>> pilha; // Pilha de figuras da imagem
+    private ArrayList<Point> pontos, histPontos; // Pontos de uma figura
+    private ArrayList<ArrayList<Point>> pilha, histPilha; // Pilha de figuras da imagem
     private Point ultimoPonto;
-    protected int funcaoAtiva = 0;
+    private int funcaoAtiva = 0;
+    private boolean holdCtrl, holdAlt;
 
     public PainelDeDesenho(InterfaceGrafica p) {
         aplicacao = p;
@@ -25,6 +26,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
         setFocusable(true);
         pontos = new ArrayList<Point>();
         pilha = new ArrayList<>();
+        histPontos = new ArrayList<Point>();
+        histPilha = new ArrayList<>();
         ultimoPonto = new Point(0, 0);
     }
 
@@ -96,6 +99,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
                     Point p = e.getPoint();
                     pontos.add(p);
                     ultimoPonto = p;
+                    histPontos.clear();
                 } //Outro botao do mouse apertado 
                 else {
                     // fechar a figura
@@ -112,6 +116,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
                     	Point p = e.getPoint();
                         pontos.add(p);
                         ultimoPonto = p;
+                        histPontos.clear();
                     } else {
                     	// nao faz nada
                     }
@@ -136,6 +141,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
                     Point p = e.getPoint();
                     pontos.add(p);
                     ultimoPonto = p;
+                    histPontos.clear();
                 } //Outro botao do mouse apertado 
                 else {
                     // fechar a figura
@@ -151,20 +157,40 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 
     // Armazena a figura na pilha e libera o atributo principal para a proxima figura na pilha
     private void proxFigura() {
-        if (pontos.get(0).getX() == pontos.get(pontos.size() - 1).getX()
-                && pontos.get(0).getY() == pontos.get(pontos.size() - 1).getY()
-                && pontos.size() > 1) {
-            pilha.add(pontos);
-            pontos = new ArrayList<Point>();
+        if (!pontos.isEmpty()) {
+        	if (pontos.get(0).getX() == pontos.get(pontos.size() - 1).getX()
+                    && pontos.get(0).getY() == pontos.get(pontos.size() - 1).getY()
+                    && pontos.size() > 1) {
+                pilha.add(pontos);
+                pontos = new ArrayList<Point>();
+                histPilha.clear();
+            }
         }
     }
     
     public void undo() {
-    	// TODO: FUNCAO DE UNDO
+    	// FUNCAO DE UNDO
+    	//System.out.println("UNDO");
+    	if (!pontos.isEmpty()) {
+    		histPontos.add(pontos.get(pontos.size()-1));
+        	pontos.remove(pontos.size()-1);
+        } else {
+        	if (!pilha.isEmpty()) {
+        		histPilha.add(pilha.get(pilha.size()-1));
+        		pilha.remove(pilha.size()-1);
+        	}
+        }
     }
     
     public void redo() {
-    	// TODO: FUNCAO DE REDO
+    	// FUNCAO DE REDO
+    	if (!histPontos.isEmpty()) {
+        	pontos.add(histPontos.get(histPontos.size()-1));
+        } else {
+        	if (!histPilha.isEmpty()) {
+        		pilha.add(histPilha.get(histPilha.size()-1));
+        	}
+        }
     }
     
     public void alteraMarcador() {
@@ -184,10 +210,26 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
      * @param e objeto relativo ao evento de teclas
      */
     public void keyPressed(KeyEvent e) {
-        // Tecla Apertada
+        // EVENTOS DE TECLADO
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             //Tecla ESC
             pontos.clear();
+        }
+        if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+    		holdCtrl = true;
+    	}
+    	if (e.getKeyCode() == KeyEvent.VK_ALT) {
+    		holdAlt = true;
+    	}
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+            //Tecla Ctrl+Z - Cancela o último passo
+        	undo();
+        	holdCtrl = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_Y && holdCtrl) {
+            //Tecla Ctrl+Y - Refaz o último passo
+            redo();
+        	holdCtrl = false;
         }
         
         // FUNCOES POR TECLADO 
@@ -203,58 +245,66 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
                     //Tecla 0
                     Point p = new Point(ultimoPonto.x + 50, ultimoPonto.y);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_1) {
                     //Tecla 1
                     Point p = new Point(ultimoPonto.x + 35, ultimoPonto.y - 35);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_2) {
                     //Tecla 2
                     Point p = new Point(ultimoPonto.x, ultimoPonto.y - 50);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_3) {
                     //Tecla 3
                     Point p = new Point(ultimoPonto.x - 35, ultimoPonto.y - 35);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_4) {
                     //Tecla 4
                     Point p = new Point(ultimoPonto.x - 50, ultimoPonto.y);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_5) {
                     //Tecla 5
                     Point p = new Point(ultimoPonto.x - 35, ultimoPonto.y + 35);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_6) {
                     //Tecla 6
                     Point p = new Point(ultimoPonto.x, ultimoPonto.y + 50);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
                 if (e.getKeyCode() == KeyEvent.VK_7) {
                     //Tecla 7
                     Point p = new Point(ultimoPonto.x + 35, ultimoPonto.y + 35);
                     pontos.add(p);
+                    histPontos.clear();
                     ultimoPonto = p;
                 }
         		break;
         	case 2:
-        		// TODO: FUNCAO DE DESENHAR UM RETANGULO
-        		
+        		// FUNCAO DE DESENHAR UM RETANGULO
+        		// NAO FAZ NADA
         		break;
         	case 3:
-        		// TODO: FUNCAO DE DESENHAR UM TRIANGULO
-        		
+        		// FUNCAO DE DESENHAR UM TRIANGULO
+        		// NAO FAZ NADA
         		break;
         	default:
         		// FUNCAO DE DESENHAR UM POLIGONO LIVRE
@@ -268,7 +318,14 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 
     public void keyReleased(KeyEvent e) { }
 
-    public void keyTyped(KeyEvent e) { }
+    public void keyTyped(KeyEvent e) { 
+    	if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
+    		holdCtrl = true;
+    	}
+    	if (e.getKeyCode() == KeyEvent.VK_ALT) {
+    		holdAlt = true;
+    	}
+    }
 
     //Metodo de acesso e modificador para a colecao de pontos
     public ArrayList<Point> getPontos() {
@@ -277,7 +334,9 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 
     public void setPontos(ArrayList<Point> pontos) {
         this.pontos = pontos;
-        ultimoPonto = pontos.get(pontos.size() - 1);
+        if (!pontos.isEmpty()) {
+        	ultimoPonto = pontos.get(pontos.size() - 1);
+        }
     }
 
     //Metodo de acesso e modificador para a PILHA
@@ -287,6 +346,10 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 
     public void setPilha(ArrayList<ArrayList<Point>> pilha) {
         this.pilha = pilha;
+    }
+    
+    public void setFuncao(int funcao) {
+    	funcaoAtiva = funcao;
     }
 
 }
