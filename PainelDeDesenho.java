@@ -148,6 +148,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			}
 			break;
 		case 2:
+			// FUNCAO DE DESENHAR UM RETANGULO
+			
 			if (e.getButton() == MouseEvent.BUTTON1) 
 			{
 				if(ret.isEmpty()) // primeiro ponto
@@ -176,6 +178,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			}
 			break;
 		case 3:
+			// FUNCAO DE DESENHAR UM TRIANGULO
+			
 			if (e.getButton() == MouseEvent.BUTTON1) 
 			{
 				if(ret.isEmpty())
