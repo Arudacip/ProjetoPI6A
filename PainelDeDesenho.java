@@ -13,7 +13,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 	private static final long serialVersionUID = 1L;
 	private InterfaceGrafica aplicacao;
 	private DialogMarker dialogMark;
-	private ArrayList<Point> pontos, histPontos; // Pontos de uma figura
+	private ArrayList<Point> pontos, histPontos, ret; // Pontos de uma figura
 	private ArrayList<ArrayList<Point>> pilha, histPilha; // Pilha de figuras da imagem
 	private Point ultimoPonto, coordAtual;
 	private int funcaoAtiva, mkDiam;
@@ -34,6 +34,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 		mkDiam = 10;
 		mkMarker = true;
 		mkLine = false;
+		ret = new ArrayList<Point>();
 	}
 
 	public void paint(Graphics g) {
@@ -147,12 +148,59 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			}
 			break;
 		case 2:
-			// TODO: FUNCAO DE DESENHAR UM RETANGULO
-
+			if (e.getButton() == MouseEvent.BUTTON1) 
+			{
+				if(ret.isEmpty()) // primeiro ponto
+				{
+					Point p = e.getPoint();
+					ret.add(p);
+					pontos.add(p);
+				}
+				else
+				{
+					Point p = e.getPoint();
+					Point P1 = new Point();
+					P1.setLocation(ret.get(0).getX(), p.getY());
+					Point P2 = new Point();
+					P2.setLocation(p.getX(), ret.get(0).getY());
+					ret.add(P2);
+					ret.add(p);
+					ret.add(P1);
+					ret.add(ret.get(0));
+					for(Point item : ret)
+					{
+						pontos.add(item);
+					}
+					ret.clear();
+				}
+			}
 			break;
 		case 3:
-			// TODO: FUNCAO DE DESENHAR UM TRIANGULO
-
+			if (e.getButton() == MouseEvent.BUTTON1) 
+			{
+				if(ret.isEmpty())
+				{
+					Point p = e.getPoint();
+					ret.add(p);
+					pontos.add(p);
+				}
+				else
+				{
+					Point p = e.getPoint();
+					Point P1 = new Point();
+					P1.setLocation(ret.get(0).getX(), p.getY());
+					Point P2 = new Point();
+					P2.setLocation(p.getX(), ret.get(0).getY());
+					ret.add(p);
+					ret.add(P1);
+					ret.add(ret.get(0));
+					for(Point item : ret)
+					{
+						pontos.add(item);
+					}
+					ret.clear();
+				}
+			}
 			break;
 		default:
 			// FUNCAO DE DESENHAR UM POLIGONO LIVRE
@@ -192,6 +240,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 	public void undo() {
 		// FUNCAO DE UNDO
 		// System.out.println("UNDO");
+		ret.clear();
 		if (!pontos.isEmpty()) {
 			histPontos.add(pontos.get(pontos.size() - 1));
 			pontos.remove(pontos.size() - 1);
