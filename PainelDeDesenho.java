@@ -71,7 +71,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			for (int i = 0; i < pontos.size(); i++) {
 				Point p = pontos.get(i);
 				if (mkMarker) {
-					g2d.fillOval(p.x - 5, p.y - 5, mkDiam, mkDiam);
+					g2d.fillOval(p.x - (mkDiam/2), p.y - (mkDiam/2), mkDiam, mkDiam);
 				}
 			}
 		}
@@ -251,12 +251,12 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			holdAlt = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_Z) {
-			// Tecla Ctrl+Z - Cancela o último passo
+			// Tecla Ctrl+Z - Cancela o Ãºltimo passo
 			undo();
 			holdCtrl = false;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_Y && holdCtrl) {
-			// Tecla Ctrl+Y - Refaz o último passo
+			// Tecla Ctrl+Y - Refaz o Ãºltimo passo
 			redo();
 			holdCtrl = false;
 		}
