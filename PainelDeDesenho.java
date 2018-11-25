@@ -13,7 +13,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 	private static final long serialVersionUID = 1L;
 	private InterfaceGrafica aplicacao;
 	private DialogMarker dialogMark;
-	private ArrayList<Point> pontos, histPontos; // Pontos de uma figura
+	private ArrayList<Point> pontos, histPontos, ret; // Pontos de uma figura
 	private ArrayList<ArrayList<Point>> pilha, histPilha; // Pilha de figuras da imagem
 	private Point ultimoPonto, coordAtual;
 	private int funcaoAtiva, mkDiam;
@@ -34,6 +34,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 		mkDiam = 10;
 		mkMarker = true;
 		mkLine = false;
+		//ret = new ArrayList<Point>();
 	}
 
 	public void paint(Graphics g) {
@@ -54,7 +55,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			for (int i = 0; i < fixo.size(); i++) {
 				Point p = fixo.get(i);
 				if (mkMarker) {
-					g2d.fillOval(p.x - 5, p.y - 5, mkDiam, mkDiam);
+					int meio = mkDiam/2;
+					g2d.fillOval(p.x - meio, p.y - meio, mkDiam, mkDiam);
 				}
 			}
 		}
@@ -71,7 +73,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			for (int i = 0; i < pontos.size(); i++) {
 				Point p = pontos.get(i);
 				if (mkMarker) {
-					g2d.fillOval(p.x - 5, p.y - 5, mkDiam, mkDiam);
+					int meio = mkDiam/2;
+					g2d.fillOval(p.x - meio, p.y - meio, mkDiam, mkDiam);
 				}
 			}
 		}
@@ -147,12 +150,63 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			}
 			break;
 		case 2:
-			// TODO: FUNCAO DE DESENHAR UM RETANGULO
-
+			// FUNCAO DE DESENHAR UM RETANGULO
+			
+			if (e.getButton() == MouseEvent.BUTTON1) 
+			{
+				if(pontos.isEmpty()) // primeiro ponto
+				{
+					Point p = e.getPoint();
+					//ret.add(p);
+					pontos.add(p);
+				}
+				else
+				{
+					Point p = e.getPoint();
+					Point P1 = new Point();
+					P1.setLocation(pontos.get(0).getX(), p.getY());
+					Point P2 = new Point();
+					P2.setLocation(p.getX(), pontos.get(0).getY());
+					pontos.add(P2);
+					pontos.add(p);
+					pontos.add(P1);
+					pontos.add(pontos.get(0));
+					//for(Point item : ret)
+					//{
+					//	pontos.add(item);
+					//}
+					//ret.clear();
+				}
+			}
 			break;
 		case 3:
-			// TODO: FUNCAO DE DESENHAR UM TRIANGULO
-
+			// FUNCAO DE DESENHAR UM TRIANGULO
+			
+			if (e.getButton() == MouseEvent.BUTTON1) 
+			{
+				if(pontos.isEmpty())
+				{
+					Point p = e.getPoint();
+					//ret.add(p);
+					pontos.add(p);
+				}
+				else
+				{
+					Point p = e.getPoint();
+					Point P1 = new Point();
+					P1.setLocation(pontos.get(0).getX(), p.getY());
+					Point P2 = new Point();
+					P2.setLocation(p.getX(), pontos.get(0).getY());
+					pontos.add(p);
+					pontos.add(P1);
+					pontos.add(pontos.get(0));
+					//for(Point item : ret)
+					//{
+					//	pontos.add(item);
+					//}
+					//ret.clear();
+				}
+			}
 			break;
 		default:
 			// FUNCAO DE DESENHAR UM POLIGONO LIVRE
@@ -192,6 +246,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 	public void undo() {
 		// FUNCAO DE UNDO
 		// System.out.println("UNDO");
+		//ret.clear();
 		if (!pontos.isEmpty()) {
 			histPontos.add(pontos.get(pontos.size() - 1));
 			pontos.remove(pontos.size() - 1);
@@ -201,6 +256,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 				pilha.remove(pilha.size() - 1);
 			}
 		}
+		holdCtrl = false;
 	}
 
 	public void redo() {
@@ -212,9 +268,10 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 		} else {
 			if (!histPilha.isEmpty()) {
 				pilha.add(histPilha.get(histPilha.size() - 1));
-				histPontos.remove(histPontos.size() - 1);
+				histPilha.remove(histPilha.size() - 1);
 			}
 		}
+		holdCtrl = false;
 	}
 
 	public void alteraMarcador() {
@@ -251,12 +308,12 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			holdAlt = true;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_Z) {
-			// Tecla Ctrl+Z - Cancela o último passo
+			// Tecla Ctrl+Z - Cancela o Ãºltimo passo
 			undo();
 			holdCtrl = false;
 		}
 		if (e.getKeyCode() == KeyEvent.VK_Y && holdCtrl) {
-			// Tecla Ctrl+Y - Refaz o último passo
+			// Tecla Ctrl+Y - Refaz o Ãºltimo passo
 			redo();
 			holdCtrl = false;
 		}

@@ -32,7 +32,7 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 	 * Constroi um objeto InterfaceGrafica
 	 */
 	public InterfaceGrafica() {
-		super("MiniDraw2 versao 3.0 - by Grupo 2");
+		super("MiniDraw2 versao 8.0 - by Grupo 2");
 		setSize(750, 750);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -198,12 +198,16 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 				Object objPontos = ois.readObject();
 				Object objCorBorda = ois.readObject();
 				Object objCorInterna = ois.readObject();
+				boolean habilitar = ois.readBoolean();
+				int diametro = ois.readInt();
 				ois.close();
 				fis.close();
 				painel.setPilha((ArrayList<ArrayList<Point>>) objPilha);
 				painel.setPontos((ArrayList<Point>) objPontos);
 				corDeBordaAtual = (Color) objCorBorda;
 				corInternaAtual = (Color) objCorInterna;
+				painel.setHabilitado(habilitar);
+				painel.setMkDiam(diametro);
 				painel.repaint();
 			} catch (FileNotFoundException exc) {
 				exc.printStackTrace();
@@ -244,6 +248,8 @@ public class InterfaceGrafica extends JFrame implements ActionListener {
 				oos.writeObject(painel.getPontos());
 				oos.writeObject(corDeBordaAtual);
 				oos.writeObject(corInternaAtual);
+				oos.writeBoolean(painel.isHabilitado());
+				oos.writeInt(painel.getMkDiam());
 				oos.close();
 				fos.close();
 			} catch (FileNotFoundException exc) {
