@@ -34,7 +34,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 		mkDiam = 10;
 		mkMarker = true;
 		mkLine = false;
-		ret = new ArrayList<Point>();
+		//ret = new ArrayList<Point>();
 	}
 
 	public void paint(Graphics g) {
@@ -55,7 +55,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			for (int i = 0; i < fixo.size(); i++) {
 				Point p = fixo.get(i);
 				if (mkMarker) {
-					g2d.fillOval(p.x - 5, p.y - 5, mkDiam, mkDiam);
+					int meio = mkDiam/2;
+					g2d.fillOval(p.x - meio, p.y - meio, mkDiam, mkDiam);
 				}
 			}
 		}
@@ -72,7 +73,8 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			for (int i = 0; i < pontos.size(); i++) {
 				Point p = pontos.get(i);
 				if (mkMarker) {
-					g2d.fillOval(p.x - (mkDiam/2), p.y - (mkDiam/2), mkDiam, mkDiam);
+					int meio = mkDiam/2;
+					g2d.fillOval(p.x - meio, p.y - meio, mkDiam, mkDiam);
 				}
 			}
 		}
@@ -152,28 +154,28 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			
 			if (e.getButton() == MouseEvent.BUTTON1) 
 			{
-				if(ret.isEmpty()) // primeiro ponto
+				if(pontos.isEmpty()) // primeiro ponto
 				{
 					Point p = e.getPoint();
-					ret.add(p);
+					//ret.add(p);
 					pontos.add(p);
 				}
 				else
 				{
 					Point p = e.getPoint();
 					Point P1 = new Point();
-					P1.setLocation(ret.get(0).getX(), p.getY());
+					P1.setLocation(pontos.get(0).getX(), p.getY());
 					Point P2 = new Point();
-					P2.setLocation(p.getX(), ret.get(0).getY());
-					ret.add(P2);
-					ret.add(p);
-					ret.add(P1);
-					ret.add(ret.get(0));
-					for(Point item : ret)
-					{
-						pontos.add(item);
-					}
-					ret.clear();
+					P2.setLocation(p.getX(), pontos.get(0).getY());
+					pontos.add(P2);
+					pontos.add(p);
+					pontos.add(P1);
+					pontos.add(pontos.get(0));
+					//for(Point item : ret)
+					//{
+					//	pontos.add(item);
+					//}
+					//ret.clear();
 				}
 			}
 			break;
@@ -182,27 +184,27 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 			
 			if (e.getButton() == MouseEvent.BUTTON1) 
 			{
-				if(ret.isEmpty())
+				if(pontos.isEmpty())
 				{
 					Point p = e.getPoint();
-					ret.add(p);
+					//ret.add(p);
 					pontos.add(p);
 				}
 				else
 				{
 					Point p = e.getPoint();
 					Point P1 = new Point();
-					P1.setLocation(ret.get(0).getX(), p.getY());
+					P1.setLocation(pontos.get(0).getX(), p.getY());
 					Point P2 = new Point();
-					P2.setLocation(p.getX(), ret.get(0).getY());
-					ret.add(p);
-					ret.add(P1);
-					ret.add(ret.get(0));
-					for(Point item : ret)
-					{
-						pontos.add(item);
-					}
-					ret.clear();
+					P2.setLocation(p.getX(), pontos.get(0).getY());
+					pontos.add(p);
+					pontos.add(P1);
+					pontos.add(pontos.get(0));
+					//for(Point item : ret)
+					//{
+					//	pontos.add(item);
+					//}
+					//ret.clear();
 				}
 			}
 			break;
@@ -244,7 +246,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 	public void undo() {
 		// FUNCAO DE UNDO
 		// System.out.println("UNDO");
-		ret.clear();
+		//ret.clear();
 		if (!pontos.isEmpty()) {
 			histPontos.add(pontos.get(pontos.size() - 1));
 			pontos.remove(pontos.size() - 1);
@@ -254,6 +256,7 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 				pilha.remove(pilha.size() - 1);
 			}
 		}
+		holdCtrl = false;
 	}
 
 	public void redo() {
@@ -265,9 +268,10 @@ public class PainelDeDesenho extends JPanel implements MouseListener, MouseMotio
 		} else {
 			if (!histPilha.isEmpty()) {
 				pilha.add(histPilha.get(histPilha.size() - 1));
-				histPontos.remove(histPontos.size() - 1);
+				histPilha.remove(histPilha.size() - 1);
 			}
 		}
+		holdCtrl = false;
 	}
 
 	public void alteraMarcador() {
